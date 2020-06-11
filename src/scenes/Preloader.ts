@@ -10,9 +10,9 @@ export default class Preloader extends Phaser.Scene {
   }
 
   preload() {
-    // 加载背景
+    // 加载背景纹理图片
     this.load.image(TextureKeys.Background, 'house/bg_repeat_340x640.png')
-    // 加载角色
+    // 加载角色纹理图片
     this.load.atlas(TextureKeys.RocketMouse, 'characters/rocket-mouse.png', 'characters/rocket-mouse.json')
   }
 
