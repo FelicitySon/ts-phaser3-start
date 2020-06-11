@@ -27,7 +27,8 @@ export default class Game extends Phaser.Scene {
       .setScrollFactor(0, 0)
 
     // 添加角色
-    const mouse = this.physics.add.sprite(width * 0.5, height * 0.5, TextureKeys.RocketMouse, 'rocketmouse_fly01.png')
+    // 播放奔跑动画
+    const mouse = this.physics.add.sprite(width * 0.5, height - 30, TextureKeys.RocketMouse, 'rocketmouse_fly01.png')
       .play(AnimationKeys.RocketMouseRun)
 
     const body = mouse.body as Phaser.Physics.Arcade.Body
@@ -35,11 +36,13 @@ export default class Game extends Phaser.Scene {
     // 设置x轴的速度
     body.setVelocityX(200)
 
+    // 设置相机跟随角色
     this.cameras.main.startFollow(mouse)
     this.cameras.main.setBounds(0, 0, Number.MAX_SAFE_INTEGER, height)
   }
 
   update(t: number, dt: number) {
+    // 根据相机滚动的x轴数据设置背景位置从而达到背景无限滚动的效果
     this.background.setTilePosition(this.cameras.main.scrollX)
   }
 }
