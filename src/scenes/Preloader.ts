@@ -12,6 +12,13 @@ export default class Preloader extends Phaser.Scene {
   preload() {
     // 加载背景纹理图片
     this.load.image(TextureKeys.Background, 'house/bg_repeat_340x640.png')
+    // 加载装饰物
+    this.load.image(TextureKeys.MouseHole, 'house/object_mousehole.png')  // 老鼠洞
+    this.load.image(TextureKeys.Window1, 'house/object_window1.png')  // 窗户 1
+    this.load.image(TextureKeys.Window2, 'house/object_window2.png')  // 窗户 2
+    this.load.image(TextureKeys.Bookcase1, 'house/object_bookcase1.png')  // 书柜 1
+    this.load.image(TextureKeys.Bookcase2, 'house/object_bookcase2.png')  // 书柜 2
+
     // 加载角色纹理图片
     this.load.atlas(TextureKeys.RocketMouse, 'characters/rocket-mouse.png', 'characters/rocket-mouse.json')
   }
