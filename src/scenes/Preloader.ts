@@ -18,6 +18,8 @@ export default class Preloader extends Phaser.Scene {
     this.load.image(TextureKeys.Window2, 'house/object_window2.png')  // 窗户 2
     this.load.image(TextureKeys.Bookcase1, 'house/object_bookcase1.png')  // 书柜 1
     this.load.image(TextureKeys.Bookcase2, 'house/object_bookcase2.png')  // 书柜 2
+    this.load.image(TextureKeys.LaserEnd, 'house/object_laser_end.png')  // 激光障碍物的两端
+    this.load.image(TextureKeys.LaserMiddle, 'house/object_laser.png')  // 激光
 
     // 加载角色纹理图片
     this.load.atlas(TextureKeys.RocketMouse, 'characters/rocket-mouse.png', 'characters/rocket-mouse.json')

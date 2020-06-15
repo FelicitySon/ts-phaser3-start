@@ -4,6 +4,7 @@ import TextureKeys from '../consts/TextureKeys'
 import SceneKeys from "../consts/SceneKeys";
 import AnimationKeys from "../consts/AnimationKeys";
 import RocketMouse from '~/game/RocketMouse';
+import LaserObstacle from '~/game/LaserObstacle';
 
 export default class Game extends Phaser.Scene {
   private background!: Phaser.GameObjects.TileSprite
@@ -114,12 +115,14 @@ export default class Game extends Phaser.Scene {
     this.bookcase2 = this.add.image(Phaser.Math.Between(2900, 3400), 580, TextureKeys.Bookcase2).setOrigin(0.5, 1)
     this.bookcases = [this.bookcase1, this.bookcase2]
 
-
     // 添加角色
     // 播放奔跑动画
     const mouse = new RocketMouse(this, width * 0.5, height - 30)
     this.add.existing(mouse)
-    
+    // 添加障碍物
+    const laser = new LaserObstacle(this, 900, 100)
+    this.add.existing(laser)
+
     const body = mouse.body as Phaser.Physics.Arcade.Body
     // 开启碰撞
     body.setCollideWorldBounds(true)

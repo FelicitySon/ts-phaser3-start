@@ -3,6 +3,7 @@ import Phaser from 'phaser'
 import TextureKeys from "../consts/TextureKeys";
 import AnimationKeys from "../consts/AnimationKeys";
 
+// 火箭鼠
 export default class RocketMouse extends Phaser.GameObjects.Container {
   private mouse: Phaser.GameObjects.Sprite
   private flames: Phaser.GameObjects.Sprite
