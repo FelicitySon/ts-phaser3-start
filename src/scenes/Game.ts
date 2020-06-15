@@ -2,7 +2,6 @@ import Phaser from 'phaser'
 
 import TextureKeys from '../consts/TextureKeys'
 import SceneKeys from "../consts/SceneKeys";
-import AnimationKeys from "../consts/AnimationKeys";
 import RocketMouse from '~/game/RocketMouse';
 import LaserObstacle from '~/game/LaserObstacle';
 
@@ -13,6 +12,8 @@ export default class Game extends Phaser.Scene {
   private window2!: Phaser.GameObjects.Image
   private bookcase1!: Phaser.GameObjects.Image
   private bookcase2!: Phaser.GameObjects.Image
+  private laserObstacle!: LaserObstacle
+  private mouse!: RocketMouse
 
   private bookcases: Phaser.GameObjects.Image[] = []
   private windows: Phaser.GameObjects.Image[] = []
@@ -83,6 +84,28 @@ export default class Game extends Phaser.Scene {
     }
   }
 
+  // 随机安放激光障碍物
+  private wrapLaserObstical() {
+    const scrollX = this.cameras.main.scrollX
+    const rightEdge = scrollX + this.scale.width
+
+    const body = this.laserObstacle.body as Phaser.Physics.Arcade.Body
+
+    const width = this.laserObstacle.width
+    if (this.laserObstacle.x + this.laserObstacle.width < scrollX) {
+      this.laserObstacle.x = Phaser.Math.Between(rightEdge + width, rightEdge + width + 1000)
+      this.laserObstacle.y = Phaser.Math.Between(0, 300)
+
+      body.position.x = this.laserObstacle.x + body.offset.x
+      body.position.y = this.laserObstacle.y + body.offset.y
+    }
+  }
+
+  private handleOverLapLaser(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject) {
+    const mouseObj = obj2 as RocketMouse
+    mouseObj.kill()
+  }
+
   constructor() {
     super(SceneKeys.Game)
   }
@@ -116,28 +139,31 @@ export default class Game extends Phaser.Scene {
     this.bookcases = [this.bookcase1, this.bookcase2]
 
     // 添加角色
-    // 播放奔跑动画
-    const mouse = new RocketMouse(this, width * 0.5, height - 30)
-    this.add.existing(mouse)
+    this.mouse = new RocketMouse(this, width * 0.5, height - 30)
+    this.add.existing(this.mouse)
     // 添加障碍物
-    const laser = new LaserObstacle(this, 900, 100)
-    this.add.existing(laser)
+    this.laserObstacle = new LaserObstacle(this, 900, 100)
+    this.add.existing(this.laserObstacle)
 
-    const body = mouse.body as Phaser.Physics.Arcade.Body
+    const body = this.mouse.body as Phaser.Physics.Arcade.Body
     // 开启碰撞
     body.setCollideWorldBounds(true)
     // 设置x轴的速度
     body.setVelocityX(200)
 
     // 设置相机跟随角色
-    this.cameras.main.startFollow(mouse)
+    this.cameras.main.startFollow(this.mouse)
     this.cameras.main.setBounds(0, 0, Number.MAX_SAFE_INTEGER, height)
+
+    // 设置碰撞
+    this.physics.add.overlap(this.laserObstacle, this.mouse, this.handleOverLapLaser, undefined, this)
   }
 
   update(t: number, dt: number) {
     this.wrapMouseHole()
     this.wrapWindow()
     this.wrapBookCase()
+    this.wrapLaserObstical()
     // 根据相机滚动的x轴数据设置背景位置从而达到背景无限滚动的效果
     this.background.setTilePosition(this.cameras.main.scrollX)
   }

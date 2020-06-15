@@ -26,6 +26,14 @@ export default class LaserObstacle extends Phaser.GameObjects.Container {
     this.add(top)
     this.add(middle)
     this.add(bottom)
+
+    scene.physics.add.existing(this, true)
+
+    const body = this.body as Phaser.Physics.Arcade.StaticBody
+    const width = top.displayWidth
+    const height = top.displayHeight + middle.displayHeight + bottom.displayHeight
+    body.setSize(width, height)
+    body.setOffset(-width * 0.5, 0)
   }
 
   preUpdate() { }

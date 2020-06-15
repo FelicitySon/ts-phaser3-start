@@ -3,8 +3,16 @@ import Phaser from 'phaser'
 import TextureKeys from "../consts/TextureKeys";
 import AnimationKeys from "../consts/AnimationKeys";
 
+enum MouseState {
+  Running,
+  Killed,
+  Dead
+}
+
 // 火箭鼠
 export default class RocketMouse extends Phaser.GameObjects.Container {
+  private mouseState = MouseState.Running
+
   private mouse: Phaser.GameObjects.Sprite
   private flames: Phaser.GameObjects.Sprite
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys
@@ -41,23 +49,59 @@ export default class RocketMouse extends Phaser.GameObjects.Container {
     this.flames.setVisible(enabled)
   }
 
+  // 杀死火箭鼠
+  kill() {
+    if (this.mouseState !== MouseState.Running) {
+      return
+    }
+
+    this.mouseState = MouseState.Killed
+
+    this.mouse.play(AnimationKeys.RocketMouseDead)
+
+    const body = this.body as Phaser.Physics.Arcade.Body
+    body.setAccelerationY(0)
+    body.setVelocity(1000, 0)
+    this.enableJetpack(false)
+  }
+
   preUpdate() {
     const body = this.body as Phaser.Physics.Arcade.Body
 
-    if (this.cursors.space?.isDown) {
-      this.mouse.play(AnimationKeys.RocketMouseFly, true)
-      body.setAccelerationY(-600)
-      this.enableJetpack(true)
-    } else {
-      // 如果火箭鼠触地
-      if (body.blocked.down) {
-        this.mouse.play(AnimationKeys.RocketMouseRun, true)
-        // 如果火箭鼠垂直方向的速度大于零
-      } else if (body.velocity.y > 0) {
-        this.mouse.play(AnimationKeys.RocketMouseFall, true)
-      }
-      body.setAccelerationY(0)
-      this.enableJetpack(false)
+    switch (this.mouseState) {
+      case MouseState.Running:
+        {
+          if (this.cursors.space?.isDown) {
+            this.mouse.play(AnimationKeys.RocketMouseFly, true)
+            body.setAccelerationY(-600)
+            this.enableJetpack(true)
+          } else {
+            // 如果火箭鼠触地
+            if (body.blocked.down) {
+              this.mouse.play(AnimationKeys.RocketMouseRun, true)
+              // 如果火箭鼠垂直方向的速度大于零
+            } else if (body.velocity.y > 0) {
+              this.mouse.play(AnimationKeys.RocketMouseFall, true)
+            }
+            body.setAccelerationY(0)
+            this.enableJetpack(false)
+          }
+          break
+        }
+      case MouseState.Killed:
+        {
+          body.velocity.x *= 0.99
+          if (body.velocity.x <= 5) {
+            this.mouseState = MouseState.Dead
+          }
+          break
+        }
+      case MouseState.Dead:
+        {
+          body.setVelocity(0, 0)
+          break
+        }
     }
+
   }
 }
